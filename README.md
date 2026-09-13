@@ -56,3 +56,5 @@ Cloudflare Worker, который получает новые входящие �
 ## Deployment
 
 Проект подключён к Cloudflare Workers Builds. Каждый новый commit в ветку `main` запускает новый deploy автоматически.
+
+Build trigger check: 2026-09-14.
