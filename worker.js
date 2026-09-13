@@ -204,7 +204,26 @@ async function processAvitoEvent(event, env) {
 
     lines.push("", "💬 Сообщение:", truncate(messageText, 3000));
 
-    await sendTelegram(env, lines.join("\n"));
+    const avitoChatUrl = message.chat_id
+      ? `https://www.avito.ru/profile/messenger/channel/${encodeURIComponent(
+          String(message.chat_id)
+        )}`
+      : null;
+
+    const replyMarkup = avitoChatUrl
+      ? {
+          inline_keyboard: [
+            [
+              {
+                text: "💬 Открыть диалог в Авито",
+                url: avitoChatUrl,
+              },
+            ],
+          ],
+        }
+      : null;
+
+    await sendTelegram(env, lines.join("\n"), replyMarkup);
   } catch (error) {
     console.error("Webhook processing error", error);
   }
@@ -305,8 +324,19 @@ async function fetchWithBearer(url, options, token) {
   });
 }
 
-async function sendTelegram(env, text) {
+async function sendTelegram(env, text, replyMarkup = null) {
   assertEnv(env, ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"]);
+
+  const payload = {
+    chat_id: env.TELEGRAM_CHAT_ID,
+    text: truncate(text, 3900),
+    disable_web_page_preview: true,
+    disable_notification: false,
+  };
+
+  if (replyMarkup) {
+    payload.reply_markup = replyMarkup;
+  }
 
   const response = await fetch(
     `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
@@ -315,11 +345,7 @@ async function sendTelegram(env, text) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        chat_id: env.TELEGRAM_CHAT_ID,
-        text: truncate(text, 3900),
-        disable_web_page_preview: true,
-      }),
+      body: JSON.stringify(payload),
     }
   );
 
