@@ -1,0 +1,4 @@
+name = "avito-notify"
+main = "worker.js"
+compatibility_date = "2026-09-14"
+workers_dev = true
