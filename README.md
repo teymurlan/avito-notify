@@ -52,3 +52,7 @@ Cloudflare Worker, который получает новые входящие �
 ## Безопасность
 
 Никогда не добавляй реальные ключи и токены в `worker.js`, `wrangler.toml`, README или GitHub Secrets репозитория. Все рабочие ключи хранятся только в Cloudflare Workers → Settings → Variables and Secrets.
+
+## Deployment
+
+Проект подключён к Cloudflare Workers Builds. Каждый новый commit в ветку `main` запускает новый deploy автоматически.
